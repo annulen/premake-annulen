@@ -206,6 +206,18 @@
 			scope = "config",
 			usagecopy = true,
 		},
+
+		installpath =
+		{
+			kind = "string",
+			scope = "config",
+		},
+		
+		install =
+		{
+			kind = "list",
+			scope = "container",
+		},
 		
 		kind =
 		{
@@ -538,7 +550,9 @@
 --
 
 	function premake.setarray(ctype, fieldname, value, allowed)
+print("setarray: ", ctype, fieldname, value)
 		local container, err = premake.getobject(ctype)
+print("setarray2: ", container.name)
 		if (not container) then
 			error(err, 4)
 		end
@@ -558,6 +572,7 @@
 					error(err, depth)
 				end
 				table.insert(container[fieldname], value)
+print("insert ", container.name, fieldname, value)
 			end
 		end
 

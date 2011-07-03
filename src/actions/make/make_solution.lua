@@ -35,12 +35,18 @@
 		_p('')
 		_p('all: $(PROJECTS)')
 		_p('')
+		_p('install: %s', table.implode(_MAKE.esc(table.extract(sln.projects, "name")), "install_", "", " "))
+		_p('')
 
 		-- write the project build rules
 		for _, prj in ipairs(sln.projects) do
 			_p('%s: %s', _MAKE.esc(prj.name), table.concat(_MAKE.esc(table.extract(premake.getdependencies(prj), "name")), " "))
 			_p('\t@echo "==== Building %s ($(config)) ===="', prj.name)
 			_p('\t@${MAKE} --no-print-directory -C %s -f %s', _MAKE.esc(path.getrelative(sln.location, prj.location)), _MAKE.esc(_MAKE.getmakefilename(prj, true)))
+			_p('')
+			_p('install_%s: %s', _MAKE.esc(prj.name), table.concat(_MAKE.esc(table.extract(premake.getdependencies(prj), "name")), " "))
+			_p('\t@echo "==== Installing %s ($(config)) ===="', prj.name)
+			_p('\t@${MAKE} --no-print-directory -C %s -f %s install', _MAKE.esc(path.getrelative(sln.location, prj.location)), _MAKE.esc(_MAKE.getmakefilename(prj, true)))
 			_p('')
 		end
 

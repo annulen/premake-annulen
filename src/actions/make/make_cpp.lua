@@ -85,6 +85,20 @@
 			_p('')
 		end
 
+		-- install target
+		_p('install:')
+		if prj.install then
+			_p('\t@echo Installing %s', prj.name)
+			_p('%d', table.getn(prj.install))
+			_p('ifeq (posix,$(SHELLTYPE))')
+			for _, inst in ipairs(prj.install) do
+				_p('install %s %s', inst.files, inst.path)
+			end
+			_p('else')
+			_p('endif')
+		end
+		_p('')
+
 		-- clean target
 		_p('clean:')
 		_p('\t@echo Cleaning %s', prj.name)
