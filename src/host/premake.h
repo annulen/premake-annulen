@@ -45,6 +45,9 @@
 /* A success return code */
 #define OKAY   (0)
 
+/* API functions */
+int premake_init(lua_State* L, int argc, const char** argv);
+int call_premake_main(lua_State* L);
 
 /* Bootstrapping helper functions */
 int do_isfile(const char* filename);
@@ -70,5 +73,4 @@ int os_rmdir(lua_State* L);
 int os_stat(lua_State* L);
 int os_uuid(lua_State* L);
 int string_endswith(lua_State* L);
-
 
