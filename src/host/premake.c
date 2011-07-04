@@ -23,7 +23,6 @@ static int process_arguments(lua_State* L, int argc, const char** argv);
 static int process_option(lua_State* L, const char* arg);
 static int load_builtin_scripts(lua_State* L);
 
-
 /* A search path for script files */
 static const char* scripts_path = NULL;
 
@@ -67,6 +66,7 @@ static const luaL_Reg string_functions[] = {
 /**
  * Program entry point.
  */
+#ifndef PREMAKE_LIBRARY
 int main(int argc, const char** argv)
 {
 	lua_State* L;
@@ -75,6 +75,21 @@ int main(int argc, const char** argv)
 	/* prepare Lua for use */
 	L = lua_open();
 	luaL_openlibs(L);
+
+	/* Load built-in scripts and initialize global variables */
+	z = premake_init(L, argc, argv);
+
+	if (z == OKAY)  z = call_premake_main(L);
+	/* Clean up and turn off the lights */
+	lua_close(L);
+	return z;
+}
+#endif
+
+int premake_init(lua_State* L, int argc, const char** argv)
+{
+	int z = OKAY;
+
 	luaL_register(L, "path",   path_functions);
 	luaL_register(L, "os",     os_functions);
 	luaL_register(L, "string", string_functions);
@@ -103,8 +118,6 @@ int main(int argc, const char** argv)
 	/* Run the built-in Premake scripts */
 	if (z == OKAY)  z = load_builtin_scripts(L);
 
-	/* Clean up and turn off the lights */
-	lua_close(L);
 	return z;
 }
 
@@ -303,7 +316,11 @@ int load_builtin_scripts(lua_State* L)
 		printf(ERROR_MESSAGE, lua_tostring(L, -1));
 		return !OKAY;
 	}
+	return OKAY;
+}
 
+int call_premake_main(lua_State* L)
+{
 	/* hand off control to the scripts */
 	lua_getglobal(L, "debug");
 	lua_getfield(L, -1, "traceback");
@@ -339,7 +356,10 @@ int load_builtin_scripts(lua_State* L)
 			return !OKAY;
 		}
 	}
+	return OKAY;
+}
 
+int call_premake_main(lua_State* L) {
 	/* hand off control to the scripts */
 	lua_getglobal(L, "debug");
 	lua_getfield(L, -1, "traceback");
