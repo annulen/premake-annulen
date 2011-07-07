@@ -59,6 +59,8 @@
 		},
 	}
 
+	-- External dependencies of scriptfile
+	premake.scriptdepends = { }
 
 --
 -- A replacement for Lua's built-in dofile() function, this one sets the
@@ -68,6 +70,9 @@
 
 	local builtin_dofile = dofile
 	function dofile(fname)
+		-- Track external dependencies of scriptfile
+		table.insert(premake.scriptdepends, path.getabsolute(fname))
+
 		-- remember the current working directory and file; I'll restore it shortly
 		local oldcwd = os.getcwd()
 		local oldfile = _SCRIPT
@@ -149,3 +154,17 @@
 		return builtin_type(t)
 	end
 	
+--
+-- Track external dependencies of scriptfile
+--
+
+	local builtin_require = require
+	function require(modname)
+		builtin_require(modname)
+		-- Track only local modules which can be parts of project
+		local filename = string.gsub(modname, "%.", "/")..".lua"
+		if os.isfile(filename) then
+			table.insert(premake.scriptdepends, path.getabsolute(filename))
+		end
+	end
+
