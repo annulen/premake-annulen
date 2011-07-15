@@ -37,8 +37,8 @@
 				formats = { "lib%s.so", "%s.so" }
 				path = os.getenv("LD_LIBRARY_PATH") or ""
 	
-				io.input("/etc/ld.so.conf")
-				if io.input() then
+				if os.isfile("/etc/ld.so.conf") then
+					io.input("/etc/ld.so.conf")
 					for line in io.lines() do
 						path = path .. ":" .. line
 					end
@@ -48,6 +48,7 @@
 			
 			table.insert(formats, "%s")	
 			path = (path or "") .. ":/lib:/usr/lib:/usr/local/lib"
+			print("path=", path)
 		end
 		
 		for _, fmt in ipairs(formats) do
