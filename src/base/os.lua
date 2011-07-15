@@ -26,11 +26,10 @@
 		if os.is("windows") then
 			formats = { "%s.dll", "%s" }
 			path = os.getenv("PATH")
-		else
-			if os.is("macosx") then
+		elseif os.is("macosx") then
 				formats = { "lib%s.dylib", "%s.dylib" }
 				path = os.getenv("DYLD_LIBRARY_PATH")
-			else
+		else
 				formats = { "lib%s.so", "%s.so" }
 				path = os.getenv("LD_LIBRARY_PATH") or ""
 	
@@ -40,8 +39,7 @@
 						path = path .. ":" .. line
 					end
 					io.input():close()
-				end
-			end
+		end
 			
 			table.insert(formats, "%s")	
 			path = (path or "") .. ":/lib:/usr/lib:/usr/local/lib"
