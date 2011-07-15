@@ -37,7 +37,7 @@
 		configuration "Debug"
 			targetdir   "bin/debug"
 			defines     "_DEBUG"
-			flags       { "Symbols" }
+			flags       { "OptimizeSize" }
 			
 		configuration "Release"
 			targetdir   "bin/release"
