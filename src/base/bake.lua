@@ -157,11 +157,16 @@
 --    The source object, containing the settings to added to the destination.
 --
 
-	local function mergefield(kind, dest, src)
+	local function mergefield(kind, dest, src, nodedup)
 		local tbl = dest or { }
 		if kind == "keyvalue" or kind == "keypath" then
 			for key, value in pairs(src) do
 				tbl[key] = mergefield("list", tbl[key], value)
+			end
+		elseif nodedup then
+			for _, item in ipairs(src) do
+				table.insert(tbl, item)
+				tbl[item] = item
 			end
 		else
 			for _, item in ipairs(src) do
@@ -186,7 +191,7 @@
 				local field = premake.fields[fieldname]
 				if field then
 					if type(value) == "table" then
-						dest[fieldname] = mergefield(field.kind, dest[fieldname], value)
+						dest[fieldname] = mergefield(field.kind, dest[fieldname], value, field.nodedup)
 					else
 						dest[fieldname] = value
 					end

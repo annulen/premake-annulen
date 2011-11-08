@@ -261,6 +261,62 @@
 			kind  = "path",
 			scope = "container",
 		},
+
+		makeprjclean =
+		{
+			kind = "list",
+			scope = "config",
+			nodedup = true
+		},
+
+		makeprjconfig =
+		{
+			kind = "list",
+			scope = "config",
+			nodedup = true
+		},
+
+		makeprjheader =
+		{
+			kind = "list",
+			scope = "config",
+			nodedup = true
+		},
+
+		makeprjfooter =
+		{
+			kind = "list",
+			scope = "config",
+			nodedup = true
+		},
+
+		makeslnclean =
+		{
+			kind = "list",
+			scope = "solution",
+			nodedup = true
+		},
+
+		makeslnconfig =
+		{
+			kind = "list",
+			scope = "config",
+			nodedup = true
+		},
+
+		makeslnheader =
+		{
+			kind = "list",
+			scope = "solution",
+			nodedup = true
+		},
+
+		makeslnfooter =
+		{
+			kind = "list",
+			scope = "solution",
+			nodedup = true
+		},
 		
 		makesettings =
 		{
