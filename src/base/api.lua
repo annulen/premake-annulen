@@ -4,13 +4,14 @@
 -- Copyright (c) 2002-2011 Jason Perkins and the Premake project
 --
 
+	premake.fields = {}
 
 --
 -- Here I define all of the getter/setter functions as metadata. The actual
 -- functions are built programmatically below.
 --
 	
-	premake.fields = 
+	local mainfields =
 	{
 		basedir =
 		{
@@ -641,18 +642,34 @@
 		end
 	end
 
+--
+-- Builds accessor function from given metadata.
+--
+function newapi(field)
+	premake.fields[field.name] = field
+	_G[field.name] = function(value)
+		return accessor(field.name, value)
+	end
+end
+
+--
+-- Builds getter/setter functions from given metadata.
+--
+function newapis(fields)
+
+	for name, field in pairs(fields) do
+		premake.fields[name] = field
+		_G[name] = function(value)
+			return accessor(name, value)
+		end
+	end
+end
 
 
 --
 -- Build all of the getter/setter functions from the metadata above.
 --
-	
-	for name,_ in pairs(premake.fields) do
-		_G[name] = function(value)
-			return accessor(name, value)
-		end
-	end
-	
+newapis(mainfields)
 
 
 --
