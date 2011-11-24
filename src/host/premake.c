@@ -264,7 +264,6 @@ int process_option(lua_State* L, const char* arg)
 }
 
 
-
 #if !defined(NDEBUG)
 /**
  * When running in debug mode, the scripts are loaded from the disk. The path to
@@ -301,9 +300,11 @@ int load_builtin_scripts(lua_State* L)
 	}
 
 	/* hand off control to the scripts */
+	lua_getglobal(L, "debug");
+	lua_getfield(L, -1, "traceback");
 	lua_getglobal(L, "_premake_main");
 	lua_pushstring(L, scripts_path);
-	if (lua_pcall(L, 1, 1, 0) != OKAY)
+	if (lua_pcall(L, 1, 1, -3) != OKAY)
 	{
 		printf(ERROR_MESSAGE, lua_tostring(L, -1));
 		return !OKAY;
@@ -335,8 +336,10 @@ int load_builtin_scripts(lua_State* L)
 	}
 
 	/* hand off control to the scripts */
+	lua_getglobal(L, "debug");
+	lua_getfield(L, -1, "traceback");
 	lua_getglobal(L, "_premake_main");
-	if (lua_pcall(L, 0, 1, 0) != OKAY)
+	if (lua_pcall(L, 0, 1, -2) != OKAY)
 	{
 		printf(ERROR_MESSAGE, lua_tostring(L, -1));
 		return !OKAY;
