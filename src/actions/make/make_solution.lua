@@ -50,7 +50,7 @@
 			_p('\t@${MAKE} --no-print-directory -C %s -f %s clean', _MAKE.esc(path.getrelative(sln.location, prj.location)), _MAKE.esc(_MAKE.getmakefilename(prj, true)))
 		end
 		if sln.makeslnclean then
-			_p('\t%s', table.implode(sln.makeslnclean, "", "", "\n\t"))
+			_p('%s', table.implode(sln.makeslnclean, "", "", "\n"))
 		end
 		_p('')
 		

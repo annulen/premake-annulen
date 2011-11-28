@@ -198,6 +198,9 @@
 		end
 		_p('\t$(SILENT) if exist $(subst /,\\\\,$(OBJDIR)) rmdir /s /q $(subst /,\\\\,$(OBJDIR))')
 		_p('endif')
+		if prj.makeprjclean then
+			_p('%s', table.implode(prj.makeprjclean, "", "", "\n"))
+		end
 		_p('')
 
 		-- custom build step targets

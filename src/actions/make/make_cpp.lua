@@ -96,7 +96,7 @@
 		_p('\t$(SILENT) if exist $(subst /,\\\\,$(OBJDIR)) rmdir /s /q $(subst /,\\\\,$(OBJDIR))')
 		_p('endif')
 		if prj.makeprjclean then
-			_p('\t%s', table.implode(prj.makeprjclean, "", "", "\n\t"))
+			_p('%s', table.implode(prj.makeprjclean, "", "", "\n"))
 		end
 		_p('')
 
