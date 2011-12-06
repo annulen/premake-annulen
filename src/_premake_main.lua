@@ -83,6 +83,16 @@
 			dofile(fname)
 		end
 
+		-- Add default implementation of "to" option
+		if not premake.option.get("to") then
+			print "Injecting --to"
+			for sln in premake.solution.each()  do
+				sln.location = _OPTIONS["to"]
+				sln.targetdir = _OPTIONS["to"]
+			end
+			_OPTIONS["to"] = nil
+		end
+
 
 		-- Process special options
 		
