@@ -38,7 +38,9 @@
 		printf("ACTIONS")
 		printf("")
 		for action in premake.action.each() do
-			printf(" %-17s %s", action.trigger, action.description)
+			if not action.isinternal then
+				printf(" %-17s %s", action.trigger, action.description)
+			end
 		end
 		printf("")
 

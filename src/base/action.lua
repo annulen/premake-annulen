@@ -22,14 +22,19 @@
 -- 
 
 	function premake.action.add(a)
+		local required = { "trigger" }
+		if not a.isinternal then
+			required[#required + 1] = "description"
+		end
+
 		-- validate the action object, at least a little bit
 		local missing
-		for _, field in ipairs({"description", "trigger"}) do
+		for _, field in ipairs(required) do
 			if (not a[field]) then
 				missing = field
 			end
 		end
-		
+
 		if (missing) then
 			error("action needs a " .. missing, 3)
 		end
