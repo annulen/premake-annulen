@@ -12,11 +12,7 @@ int os_getcwd(lua_State* L)
 	char* ch;
 	int result;
 
-#if PLATFORM_WINDOWS
-	result = (GetCurrentDirectory(0x4000, buffer) != 0);
-#else
 	result = (getcwd(buffer, 0x4000) != 0);
-#endif
 
 	if (!result)
 		return 0;

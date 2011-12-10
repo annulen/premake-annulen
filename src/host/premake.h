@@ -37,6 +37,7 @@
 #if PLATFORM_WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <direct.h>
 #else
 #include <unistd.h>
 #endif
