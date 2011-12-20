@@ -129,18 +129,20 @@
 				
 				local englishToAmericanSpelling =
 				{
-					Optimise = 'Optimize',
-					OptimiseSize = 'OptimizeSize',
-					OptimiseSpeed = 'OptimizeSpeed'
+					optimise = 'optimize',
+					optimisesize = 'optimizesize',
+					optimisespeed = 'optimizespeed'
 				}
-				
-				if englishToAmericanSpelling[value] then value = englishToAmericanSpelling[value] end
-			
-				if allowed_flags[value] then return value 
-				else 
-					return nil, "invalid flag"
+
+				local lowervalue = value:lower()
+				lowervalue = englishToAmericanSpelling[lowervalue] or lowervalue
+				for v, _ in pairs(allowed_flags) do
+					if v:lower() == lowervalue then
+						return v
+					end
 				end
-			end,
+				return nil, "invalid flag"
+			end
 		},
 		
 		framework =
@@ -420,8 +422,9 @@
 			if (type(allowed) == "function") then
 				return allowed(value)
 			else
+				local lowervalue = value:lower()
 				for _,v in ipairs(allowed) do
-					if (value:lower() == v:lower()) then
+					if (lowervalue == v:lower()) then
 						return v
 					end
 				end

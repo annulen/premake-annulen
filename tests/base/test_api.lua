@@ -384,3 +384,19 @@
 		uuid "7CBB5FC2-7449-497f-947F-129C5129B1FB"
 		test.isequal(premake.CurrentContainer.uuid, "7CBB5FC2-7449-497F-947F-129C5129B1FB")
 	end
+
+--
+-- flags() tests
+--
+
+	function suite.flags_case_insensitive()
+		premake.CurrentConfiguration = {}
+		flags "symbols"
+		test.isequal(premake.CurrentConfiguration.flags[1], "Symbols")
+	end
+
+	function suite.flags_case_insensitive_uk()
+		premake.CurrentConfiguration = {}
+		flags "optimisespeed"
+		test.isequal(premake.CurrentConfiguration.flags[1], "OptimizeSpeed")
+	end
