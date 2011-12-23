@@ -153,10 +153,15 @@
 		ok, err = premake.checkprojects()
 		if (not ok) then error("Error: " .. err, 0) end
 		
-		
-		-- Hand over control to the action
-		printf("Running action '%s'...", action.trigger)
-		premake.action.call(action.trigger)
+		-- Hand over control to the actions
+		local actions = premake.action.buildactionchain(action.trigger)
+		if actions == false then
+			error("Circular dependency of actions detected")
+		end
+		for _, act in ipairs(actions) do
+			premake.action.set(act.trigger)
+			premake.action.call(act.trigger)
+		end
 
 		print("Done.")
 		return 0
