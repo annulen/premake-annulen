@@ -97,6 +97,9 @@
 	
 	function test.isequal(expected, actual)
 		if (type(expected) == "table") then
+			if #expected ~= #actual then
+				test.fail("expected table size %s but was %s", #expected, #actual)
+			end
 			for k,v in pairs(expected) do
 				if not (test.isequal(expected[k], actual[k])) then
 					test.fail("expected %s but was %s", expected, actual)
