@@ -14,6 +14,8 @@
 	premake.action.list = { }
 	
 
+	premake.action.globaldepends = { }
+
 --
 -- Register a new action.
 --
@@ -43,6 +45,92 @@
 		premake.action.list[a.trigger] = a		
 	end
 
+	local function adddepends(chain, cur)
+		if not chain[cur.trigger] then
+			table.insert(chain, cur)
+			chain[cur.trigger] = true
+			for _, dep in ipairs(cur.depends or {}) do
+				local depaction = premake.action.list[dep]
+				if depaction then
+					adddepends(chain, depaction)
+				else
+					print("Warning: cannot resolve action dependency \'" .. dep .. "\'")
+				end
+			end
+		end
+	end
+
+	-- Depth-first search
+	-- Vertex colors:
+	--   nil - white (non-visited)
+	--    1  - gray (visited)
+	--    2  - black (completed)
+	-- Returns true if cycle detected
+	local function dfs(v, chain, stack)
+		if v.dfs_color == 1 then
+			return true
+		end
+		if v.dfs_color == 2 then
+			return false
+		end
+		v.dfs_color = 1
+		for i, act in ipairs(v.depends or {}) do
+			local vertex = premake.action.get(act)
+			if vertex and dfs(vertex, chain, stack) then
+				return true
+			end
+		end
+		table.insert(stack, v)
+		v.dfs_color = 2
+		return false
+	end
+
+	-- Returns false if cycle detected
+	local function topological_sort(chain)
+		local stack = {}
+		for _, v in ipairs(chain) do
+			v.dfs_color = nil
+		end
+		for _, v in ipairs(chain) do
+			if dfs(v, chain, stack) then
+				return false
+			end
+		end
+		return stack
+	end
+
+	function premake.action.buildactionchain(name)
+		local chain = {}
+		local a = premake.action.list[name]
+		if not a then
+			return chain
+		end
+
+		-- a and its dependencies, recursively
+		adddepends(chain, a)
+
+		-- Then global dependencies
+		for _, actname in ipairs(premake.action.globaldepends) do
+			local act = premake.action.list[actname]
+			if not act then
+				print("Warning: cannot resolve global action dependency \'" .. actname .. "\'")
+			elseif not chain[act.trigger] then
+				table.insert(chain, act)
+				chain[act.trigger] = true
+			end
+		end
+		for _, act in ipairs(chain) do
+			for _, actname in ipairs(premake.action.globaldepends) do
+				if act.trigger ~= actname and
+						(not table.contains(premake.action.globaldepends, act.trigger)) then
+					act.depends = act.depends or {}
+					table.insert(act.depends, actname)
+				end
+			end
+		end
+
+		return topological_sort(chain)
+	end
 
 --
 -- Trigger an action.
@@ -54,6 +142,7 @@
 --
 
 	function premake.action.call(name)
+		printf("Running action '%s' ...", name)
 		local a = premake.action.list[name]
 		for sln in premake.solution.each() do
 			if a.onsolution then
@@ -162,3 +251,28 @@
 		end
 		return false
 	end
+
+--
+-- Adds a dependecy of action1 on action2
+-- action1 needs to exist and be added when this function is called
+-- If action1 is "*", all actions will depend on action2, including those added after
+-- call of this function
+--
+-- @param action1
+--     Name of dependent action
+-- @param action2
+--     Name of dependency
+--
+	function premake.action.adddependency(action1, action2)
+		assert(action1 ~= action2, "Action cannot depend on itself")
+		if action1 == "*" then
+			table.insert(premake.action.globaldepends, action2)
+		else
+			local act = premake.action.get(action1) or error("Invalid action name", 2)
+			act.depends = act.depends or {}
+			if not table.contains(act.depends, action2) then
+				table.insert(act.depends, action2)
+			end
+		end
+	end
+
