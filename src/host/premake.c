@@ -282,7 +282,7 @@ int process_option(lua_State* L, const char* arg)
 }
 
 
-#if defined(_DEBUG)
+#ifndef NDEBUG
 /**
  * When running in debug mode, the scripts are loaded from the disk. The path to
  * the scripts must be provided via either the /scripts command line option or
@@ -336,10 +336,9 @@ int call_premake_main(lua_State* L)
 		return (int)lua_tonumber(L, -1);
 	}
 }
-#endif
 
+#else
 
-#if defined(NDEBUG)
 /**
  * When running in release mode, the scripts are loaded from a static data
  * buffer, where they were stored by a preprocess. To update these embedded
