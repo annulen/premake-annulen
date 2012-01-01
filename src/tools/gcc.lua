@@ -144,6 +144,14 @@
 				table.insert(result, "-s")
 			end
 		end
+
+		if premake.config.isoptimizedbuild(cfg.flags) and cfg.system == "linux" then
+			table.insert(result, "-Wl,-O1")
+		end
+
+		if cfg.flags.FatalWarnings then
+			table.insert(result, "-Wl,--fatal-warnings")
+		end
 	
 		if cfg.kind == "SharedLib" then
 			if cfg.system == "macosx" then
