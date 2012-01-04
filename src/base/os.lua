@@ -136,6 +136,7 @@
 		if mask:startswith("./") then
 			mask = mask:sub(3)
 		end
+        mask = path.getabsolute(mask)
 
 		-- strip off any leading directory information to find out
 		-- where the search should take place
